@@ -38,9 +38,9 @@
 
 # "temporary" build files
 /target
-target
-bin
-target-eclipse
+/bin
+/target-eclipse
+/.link_to_grails_plugins
 
 # other
 *.iws

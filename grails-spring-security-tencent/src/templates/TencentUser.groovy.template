@@ -1,0 +1,16 @@
+${domainPackageDeclaration}
+
+import ${userClassFullName}
+
+class ${domainClassName} {
+
+	long uid
+	String accessToken
+	Date accessTokenExpires
+
+	static belongsTo = [user: ${userClassName}]
+
+	static constraints = {
+		uid unique: true
+	}
+}
