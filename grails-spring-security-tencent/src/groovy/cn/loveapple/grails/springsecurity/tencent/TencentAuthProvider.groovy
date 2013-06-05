@@ -41,11 +41,14 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 					return token
 				}
 			}
-			token.uid = tencentAuthUtils.loadUserUid(token.accessToken.accessToken)
-			if (!token.uid) {
-				log.error("Can't fetch uid")
-				token.authenticated = false
-				return token
+			Date now = new Date()
+			if(!token.accessToken?.expireAt|| now.after(token.accessToken.expireAt)){
+				token.uid = tencentAuthUtils.loadUserUid(token.accessToken.accessToken)
+				if (!token.uid) {
+					log.error("Can't fetch uid")
+					token.authenticated = false
+					return token
+				}
 			}
 		}
 
