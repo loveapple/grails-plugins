@@ -60,7 +60,7 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 			}
 		}
 
-		def user = tencentAuthDao.findUser(token.uid as Long)
+		def user = tencentAuthDao.findUser(token.uid)
 		boolean justCreated = false
 
 		if (user == null) {

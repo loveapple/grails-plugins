@@ -79,7 +79,7 @@ ApplicationContextAware, GrailsApplicationAware {
 	}
 
 	Object findUser(String uid) {
-		if (tencentAuthService && tencentAuthService.respondsTo('findUser', Long)) {
+		if (tencentAuthService && tencentAuthService.respondsTo('findUser', String.class)) {
 			return tencentAuthService.findUser(uid)
 		}
 		def user = null
@@ -313,7 +313,7 @@ ApplicationContextAware, GrailsApplicationAware {
 			} else {
 				Class<?> User = grailsApplication.getDomainClass(domainClassName)?.clazz
 				if (!User) {
-					log.error("Can't find tencent user class ($domainClassName). Please configure 'grails.plugins.springsecurity.tencent.domain.classname' value, or create your own 'Object tencentAuthService.findUser(long)'")
+					log.error("Can't find tencent user class ($domainClassName). Please configure 'grails.plugins.springsecurity.tencent.domain.classname' value, or create your own 'Object tencentAuthService.findUser(String)'")
 				}
 			}
 		}
