@@ -28,21 +28,25 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 		log.debug "authenticate token : $token"
 		
 		if (token.uid) {
+			
+			Date now = new Date()
+			
 			if (StringUtils.isEmpty(token.code) && token.accessToken == null) {
 				log.error("Token should contain 'code' OR 'accessToken' to get uid")
 				token.authenticated = false
 				return token
 			}
-			if (token.code) {
+			if (token.code
+				&& (!token.accessToken?.expireAt|| now.after(token.accessToken.expireAt))) {
+				
 				log.debug "get access token in method authenticate. accessToken: ${token.accessToken}"
 				token.accessToken = tencentAuthUtils.getAccessToken(token.code, token.redirectUri)
-				if (token.accessToken == null) {
+				if (!token.accessToken.accessToken) {
 					log.error("Can't fetch access_token for code '$token.code'")
 					token.authenticated = false
 					return token
 				}
 			}
-			Date now = new Date()
 			if(!token.accessToken?.expireAt|| now.after(token.accessToken.expireAt)){
 				
 				log.debug "load user uid in method authenticate. accessToken: ${token.accessToken}"

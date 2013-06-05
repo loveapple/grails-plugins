@@ -15,7 +15,7 @@ import cn.loveapple.grails.springsecurity.tencent.TencentAuthUtils
 
 class SpringSecurityTencentGrailsPlugin {
 
-	def version = "0.0.24"
+	def version = "0.0.25"
 	def grailsVersion = "2.2 > *"
 	Map dependsOn = ['springSecurityCore': '1.2.7.2 > *']
 	def license = 'APACHE'
