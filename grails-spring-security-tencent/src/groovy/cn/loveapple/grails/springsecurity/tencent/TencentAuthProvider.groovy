@@ -34,6 +34,7 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 				return token
 			}
 			if (token.code) {
+				log.debug "get access token in method authenticate. accessToken: ${token.accessToken}"
 				token.accessToken = tencentAuthUtils.getAccessToken(token.code, token.redirectUri)
 				if (token.accessToken == null) {
 					log.error("Can't fetch access_token for code '$token.code'")
@@ -43,6 +44,9 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 			}
 			Date now = new Date()
 			if(!token.accessToken?.expireAt|| now.after(token.accessToken.expireAt)){
+				
+				log.debug "load user uid in method authenticate. accessToken: ${token.accessToken}"
+				
 				token.uid = tencentAuthUtils.loadUserUid(token.accessToken.accessToken)
 				if (!token.uid) {
 					log.error("Can't fetch uid")
@@ -60,6 +64,7 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 			if (createNew) {
 				log.info "Create new tencent user with uid $token.uid"
 				if (token.accessToken == null) {
+				log.debug "get access token in method authenticate when user is null. accessToken: ${token.accessToken}"
 					token.accessToken = tencentAuthUtils.getAccessToken(token.code, token.redirectUri)
 				}
 				if (token.accessToken == null) {
