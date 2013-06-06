@@ -87,9 +87,15 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 			if (justCreated) {
 				log.debug("User is just created")
 			}
-			if (!justCreated && token.accessToken != null) {
-				log.debug("Set new access token for user $user")
-				tencentAuthDao.updateToken(user, token)
+			if (!justCreated 
+					&& token.accessToken != null) {
+				if (user.properties.containsKey('accessToken')) {
+					if(user.accessToken != token.accessToken.accessToken){
+						log.debug("Set new access token for user $user")
+						tencentAuthDao.updateToken(user, token)
+					}
+				}
+					
 			}
 			if (!tencentAuthDao.hasValidToken(user)) {
 				log.debug("User $user has invalid access token")

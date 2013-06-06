@@ -7,6 +7,7 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -240,23 +241,27 @@ ApplicationContextAware, GrailsApplicationAware {
 			return
 		}
 		log.debug("Update access token to $token.accessToken for $tencentUser")
-		TencentUserDomainClazz.withTransaction {
-			try {
-				if (!tencentUser.isAttached()) {
-					tencentUser.attach()
+		try{
+			TencentUserDomainClazz.withTransaction {
+				try {
+					if (!tencentUser.isAttached()) {
+						tencentUser.attach()
+					}
+					if (tencentUser.properties.containsKey('accessToken')) {
+						tencentUser.accessToken = token.accessToken?.accessToken
+					}
+					if (tencentUser.properties.containsKey('accessTokenExpires')) {
+						tencentUser.accessTokenExpires = token.accessToken?.expireAt
+					}
+					tencentUser.save()
+				} catch (OptimisticLockingFailureException e) {
+					log.warn("Seems that token was updated in another thread (${e.message}). Skip")
+				} catch (Throwable e) {
+					log.error("Can't update token", e)
 				}
-				if (tencentUser.properties.containsKey('accessToken')) {
-					tencentUser.accessToken = token.accessToken?.accessToken
-				}
-				if (tencentUser.properties.containsKey('accessTokenExpires')) {
-					tencentUser.accessTokenExpires = token.accessToken?.expireAt
-				}
-				tencentUser.save()
-			} catch (OptimisticLockingFailureException e) {
-				log.warn("Seems that token was updated in another thread (${e.message}). Skip")
-			} catch (Throwable e) {
-				log.error("Can't update token", e)
 			}
+		}catch(StaleObjectStateException e){
+			log.warn("Target of tencent user has be updated by other transaction. ${tencentUser}")
 		}
 	}
 
