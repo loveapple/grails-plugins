@@ -6,15 +6,15 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.logout.LogoutHandler
 
-
 class TencentAuthCookieLogoutHandler implements LogoutHandler {
 
-	private static final Logger logger = Logger.getLogger(this)
+	private static final Logger logger = LoggerFactory.getLogger(this)
 
 	TencentAuthUtils tencentAuthUtils
 
@@ -25,7 +25,7 @@ class TencentAuthCookieLogoutHandler implements LogoutHandler {
 			HttpServletResponse httpServletResponse,
 			Authentication authentication) {
 
-		String baseDomain = null
+		String baseDomain
 
 		List<Cookie> cookies = httpServletRequest.cookies.findAll { Cookie it ->
 			//TencentAuthUtils.log.debug("Cookier $it.name, expected $cookieName")
@@ -83,5 +83,4 @@ class TencentAuthCookieLogoutHandler implements LogoutHandler {
 			logger.error("Can't remove existing token", t)
 		}
 	}
-
 }

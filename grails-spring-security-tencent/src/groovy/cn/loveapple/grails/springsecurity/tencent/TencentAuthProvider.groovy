@@ -1,7 +1,8 @@
 package cn.loveapple.grails.springsecurity.tencent
 
 import org.apache.commons.lang.StringUtils
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -13,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 class TencentAuthProvider implements AuthenticationProvider, InitializingBean, ApplicationContextAware {
 
-	private static def log = Logger.getLogger(this)
+	private static Logger log = LoggerFactory.getLogger(this)
 
 	TencentAuthDao tencentAuthDao
 	TencentAuthUtils tencentAuthUtils
@@ -22,7 +23,7 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 
 	boolean createNew = true
 
-	public Authentication authenticate(Authentication authentication) {
+	Authentication authenticate(Authentication authentication) {
 		TencentAuthToken token = authentication
 
 		log.debug "authenticate token : $token"
@@ -150,7 +151,7 @@ class TencentAuthProvider implements AuthenticationProvider, InitializingBean, A
 		return token
 	}
 
-	public boolean supports(Class<? extends Object> authentication) {
+	boolean supports(Class<? extends Object> authentication) {
 		return TencentAuthToken.isAssignableFrom(authentication);
 	}
 

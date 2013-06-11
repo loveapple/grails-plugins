@@ -7,7 +7,8 @@ import javax.servlet.ServletOutputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import org.apache.log4j.Logger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -17,9 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.web.authentication.AuthenticationFailureHandler
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 
-class JsonAuthenticationHandler implements AuthenticationSuccessHandler,
-AuthenticationFailureHandler, InitializingBean, ApplicationContextAware {
-	private static def log = Logger.getLogger(this)
+class JsonAuthenticationHandler implements AuthenticationSuccessHandler, AuthenticationFailureHandler, InitializingBean, ApplicationContextAware {
+
+	private static Logger log = LoggerFactory.getLogger(this)
 
 	ApplicationContext applicationContext
 

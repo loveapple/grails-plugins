@@ -1,9 +1,9 @@
 package cn.loveapple.grails.springsecurity.tencent
 
-public interface TencentUserDomain {
-	String getAccessToken();
-	void setAccessToken(String accessToken);
+interface TencentUserDomain {
+	String getAccessToken()
+	void setAccessToken(String accessToken)
 
-	long getUid();
+	long getUid()
 	void setUid(long uid)
 }

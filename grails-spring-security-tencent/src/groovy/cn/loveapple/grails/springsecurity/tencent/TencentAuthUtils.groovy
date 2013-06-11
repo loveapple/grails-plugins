@@ -10,12 +10,13 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 
 import org.apache.commons.codec.binary.Base64
-import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.json.JSONException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.BadCredentialsException
 
 class TencentAuthUtils {
-	private static def log = Logger.getLogger(this)
+	private static Logger log = LoggerFactory.getLogger(this)
 
 	private static Random RND = new Random()
 	private int seq = 0
