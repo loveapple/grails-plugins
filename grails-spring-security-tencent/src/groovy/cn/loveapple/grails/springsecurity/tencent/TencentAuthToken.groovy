@@ -1,12 +1,9 @@
 package cn.loveapple.grails.springsecurity.tencent
 
-import java.security.Principal
-
 import org.springframework.security.authentication.AbstractAuthenticationToken
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-class TencentAuthToken extends AbstractAuthenticationToken implements Authentication, Serializable {
+class TencentAuthToken extends AbstractAuthenticationToken {
 	String uid
 	TencentAccessToken accessToken
 	String code
@@ -17,14 +14,14 @@ class TencentAuthToken extends AbstractAuthenticationToken implements Authentica
 	Collection<GrantedAuthority> authorities
 
 	def TencentAuthToken() {
-		super([] as Collection<GrantedAuthority>);
+		super([] as Collection<GrantedAuthority>)
 	}
 
-	public Object getCredentials() {
-		return uid;
+	Object getCredentials() {
+		return uid
 	}
 	
-	public Object getPrincipal(){
+	Object getPrincipal(){
 		return principal
 	}
 

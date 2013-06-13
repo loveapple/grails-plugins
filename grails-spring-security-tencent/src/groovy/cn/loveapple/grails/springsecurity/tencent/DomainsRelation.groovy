@@ -1,6 +1,6 @@
 package cn.loveapple.grails.springsecurity.tencent
 
-public enum DomainsRelation {
+enum DomainsRelation {
 	SameObject,
 	JoinedUser
 

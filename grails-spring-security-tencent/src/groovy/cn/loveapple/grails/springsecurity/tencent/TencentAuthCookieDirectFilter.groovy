@@ -1,4 +1,4 @@
-package cn.loveapple.grails.springsecurity.tencent;
+package cn.loveapple.grails.springsecurity.tencent
 
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
@@ -7,8 +7,7 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 
-public class TencentAuthCookieDirectFilter extends
-AbstractAuthenticationProcessingFilter {
+class TencentAuthCookieDirectFilter extends AbstractAuthenticationProcessingFilter {
 
 	TencentAuthUtils tencentAuthUtils
 

@@ -19,9 +19,8 @@ class TencentAuthTagLib {
 	 * By default tag executed only once pre page
 	 *
 	 * @attr force Force tag to put FB SDK initialization code (even if it's already added)
-	 *
 	 */
-	Closure init = { attrs, body ->
+	def init = { attrs, body ->
 		Boolean init = request.getAttribute(MARKER)
 		if (init == null) {
 			init = false
@@ -49,7 +48,6 @@ class TencentAuthTagLib {
 			out << "    oauth  : true\n"
 			out << "  });\n"
 
-
 			out << body.call()
 
 			out << "};\n"
@@ -76,32 +74,30 @@ class TencentAuthTagLib {
 	 * uses server-side authentication (if such authentication type is enabled)
 	 * @attr img - url to image for connect button (for server-side authentication only)
 	 */
-	Closure connect = { attrs, body ->
+	def connect = { attrs, body ->
 		def writer = getOut()
 		if (attrs.type) {
 			if (attrs.type == 'server') {
 				writer << serverSideConnect(attrs, body)
 				return
-			} else if (attrs.type == 'client') {
+			}
+			if (attrs.type == 'client') {
 				writer << clientSideConnect(attrs, body)
 				return
-			} else {
-				log.error("Invalid connect type: ${attrs.type}")
 			}
+			log.error("Invalid connect type: ${attrs.type}")
 		}
 
 		if (tencentAuthUtils.filterTypes.contains('redirect')) {
 			log.debug("Do default server-side authentication redirect")
 			writer << serverSideConnect(attrs, body)
 			return
-		} else {
-			log.debug("Do default client-side authentication")
-			writer << clientSideConnect(attrs, body)
-			return
 		}
+		log.debug("Do default client-side authentication")
+		writer << clientSideConnect(attrs, body)
 	}
 
-	Closure serverSideConnect = { attrs, body ->
+	def serverSideConnect = { attrs, body ->
 		log.debug("Apply server side connect")
 		def writer = getOut()
 		def conf = SpringSecurityUtils.securityConfig.tencent
@@ -118,11 +114,11 @@ class TencentAuthTagLib {
 			}
 			bodyValue = img(attrs, imgUrl)
 		}
-		Closure newBody = { return bodyValue }
+		def newBody = { return bodyValue }
 		writer << link([uri: target], newBody)
 	}
 
-	Closure clientSideConnect = { attrs, body ->
+	def clientSideConnect = { attrs, body ->
 		def conf = SpringSecurityUtils.securityConfig.tencent
 
 		if (attrs.skipInit == null || !Boolean.valueOf(attrs.skipInit)) {
@@ -166,18 +162,17 @@ class TencentAuthTagLib {
 		StringBuilder buf = new StringBuilder()
 		buf.append('<img src="').append(src).append('" ')
 		Map used = [:]
-		attrs.entrySet().each { Map.Entry it ->
-			String attr = it.key
+		attrs.each { String attr, value ->
 			if (attr.startsWith('img-')) {
 				attr = attr.substring('img-'.length())
-				used[attr] = it.value?.toString()
+				used[attr] = value?.toString()
 			}
 		}
 		if (!used.alt) {
 			used.alt = conf.taglib.button.text
 		}
-		used.entrySet().each { Map.Entry it ->
-			buf.append(it.key).append('="').append(it.value).append('" ')
+		used.each { key, value ->
+			buf.append(key).append('="').append(value).append('" ')
 		}
 		buf.append("/>")
 		return buf.toString()

@@ -1,5 +1,7 @@
 import grails.util.Environment
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import cn.loveapple.grails.springsecurity.tencent.DefaultTencentAuthDao
@@ -16,37 +18,23 @@ import cn.loveapple.grails.springsecurity.tencent.TencentAuthUtils
 class SpringSecurityTencentGrailsPlugin {
 
 	def version = "0.0.28"
-	def grailsVersion = "2.2 > *"
-	Map dependsOn = ['springSecurityCore': '1.2.7.2 > *']
-	def license = 'APACHE'
-	def developers = [ /*[ name: "Chunli Hao", email: "hao0323+grails-plugin-tencent@gmail.com" ]*/
-	]
-	// Location of the plugin's issue tracker.
-	//    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
-	// Online location of the plugin's browseable source code.
-	def scm = [ url: "https://dev.loveapple.cn/repos/loveapple/src/plugins/trunk/" ]
-
+	def grailsVersion = "2.0 > *"
+	def title = "Tencent Authentication for Spring Security"
 	def author = "Chunli Hao"
 	String authorEmail = 'hao0323+grails-plugin-tencent@gmail.com'
-	def title = "Tencent Authentication for Spring Security"
 	def description = 'Tencent Authentication for Spring Security Core plugin. This plugin is based on "Tencent Authentication for Spring Security"'
-
-	// URL to the plugin's documentation
-	def documentation = ""
+	def documentation = "http://grails.org/plugin/spring-security-tencent"
 
 	def observe = ["springSecurityCore"]
 
+	def license = 'APACHE'
 	def organization = [ name: "loveapple", url: "http://www.loveapple.cn/" ]
+	def issueManagement = [ system: "GITHUB", url: "https://github.com/loveapple/grails-plugins/issues" ]
+	def scm = [ url: "https://github.com/loveapple/grails-plugins" ]
 
+	private String _tencentDaoName
 
-	String _tencentDaoName
-
-
-
-
-	def doWithWebDescriptor = { xml ->
-		// TODO Implement additions to web.xml (optional), this event occurs before
-	}
+	private static Logger log = LoggerFactory.getLogger(this)
 
 	def doWithSpring = {
 		if (Environment.current == Environment.TEST) {
@@ -59,12 +47,6 @@ class SpringSecurityTencentGrailsPlugin {
 			println 'ERROR: There is no Spring Security configuration'
 			println 'ERROR: Stop configuring Spring Security Tencent'
 			return
-		}
-
-		if (!this.hasProperty('log')) {
-			println 'WARN: No such property: log for class: SpringSecurityTencentGrailsPlugin'
-			println 'WARN: Introducing a log property for plugin'
-			this.metaClass.log = org.apache.commons.logging.LogFactory.getLog(SpringSecurityTencentGrailsPlugin)
 		}
 
 		println 'Configuring Spring Security Tencent ...'
@@ -115,7 +97,8 @@ class SpringSecurityTencentGrailsPlugin {
 		addFilters(conf, delegate, _filterTypes)
 		println '... finished configuring Spring Security Tencent'
 	}
-	private List<String> parseFilterTypes(def conf) {
+
+	private List<String> parseFilterTypes(conf) {
 		def typesRaw = conf.tencent.filter.types
 		List<String> types = null
 		if (!typesRaw) {
@@ -155,7 +138,7 @@ class SpringSecurityTencentGrailsPlugin {
 		return types
 	}
 
-	private void addFilters(def conf, def delegate, def types) {
+	private void addFilters(conf, delegate, types) {
 		int basePosition = conf.tencent.filter.position
 
 		addFilter.delegate = delegate
@@ -164,7 +147,7 @@ class SpringSecurityTencentGrailsPlugin {
 		}
 	}
 
-	private addFilter = { def conf, String name, int position ->
+	private addFilter = { conf, String name, int position ->
 		if (name == 'transparent') {
 			String _successHandler = getConfigValue(conf, 'tencent.filter.transparent.successHandler')
 			String _failureHandler = getConfigValue(conf, 'tencent.filter.transparent.failureHandler')
@@ -240,25 +223,12 @@ class SpringSecurityTencentGrailsPlugin {
 			log.error("Invalid filter type: $name")
 		}
 	}
-	def doWithDynamicMethods = { ctx ->
-		// TODO Implement registering dynamic methods to classes (optional)
-	}
-
-	def doWithApplicationContext = { applicationContext ->
-	}
-
-	def onChange = { event ->
-		// TODO Implement code that is executed when any artefact that this plugin is
-		// watching is modified and reloaded. The event contains: event.source,
-		// event.application, event.manager, event.ctx, and event.plugin.
-	}
 
 	def onConfigChange = { event ->
-		println("Config change")
 		SpringSecurityUtils.resetSecurityConfig()
 	}
 	
-	private Object getConfigValue(def conf, String ... values) {
+	private Object getConfigValue(conf, String ... values) {
 		conf = conf.flatten()
 		String key = values.find {
 			if (!conf.containsKey(it)) {
@@ -275,7 +245,8 @@ class SpringSecurityTencentGrailsPlugin {
 		}
 		return null
 	}
-	private List<String> getAsStringList(def conf, String paramHumanName, String paramName = '???') {
+
+	private List<String> getAsStringList(conf, String paramHumanName, String paramName = '???') {
 		def raw = conf
 
 		if (raw == null) {
@@ -288,8 +259,5 @@ class SpringSecurityTencentGrailsPlugin {
 			log.error("Invalid $paramHumanName filters configuration, invalid value type: '${raw.getClass()}'. Value should be defined as a Collection or String (comma separated)")
 		}
 		return null
-	}
-	def onShutdown = { event ->
-		// TODO Implement code that is executed when the application shuts down (optional)
 	}
 }

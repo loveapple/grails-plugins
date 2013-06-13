@@ -2,13 +2,11 @@ package cn.loveapple.grails.springsecurity.tencent
 
 import grails.plugins.springsecurity.SpringSecurityService
 
-import java.security.Principal
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.apache.commons.lang.builder.ToStringBuilder
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.mapping.LinkGenerator
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
@@ -49,12 +47,12 @@ class TencentAuthRedirectFilter extends AbstractAuthenticationProcessingFilter {
 
 	@Override
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-		String uri = request.getRequestURI();
-		int pathParamIndex = uri.indexOf(';');
+		String uri = request.getRequestURI()
+		int pathParamIndex = uri.indexOf(';')
 
 		if (pathParamIndex > 0) {
 			// strip everything after the first semi-colon
-			uri = uri.substring(0, pathParamIndex);
+			uri = uri.substring(0, pathParamIndex)
 		}
 
 		uri = uri.substring(request.contextPath.length())
@@ -71,5 +69,4 @@ class TencentAuthRedirectFilter extends AbstractAuthenticationProcessingFilter {
 		String path = getFilterProcessesUrl()
 		linkGenerator.link(uri: path, absolute: true)
 	}
-
 }

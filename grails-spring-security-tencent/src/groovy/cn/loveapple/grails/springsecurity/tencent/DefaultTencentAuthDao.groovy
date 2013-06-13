@@ -2,12 +2,13 @@ package cn.loveapple.grails.springsecurity.tencent
 
 import java.util.concurrent.TimeUnit
 
-import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.springsecurity.GormUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.plugins.support.aware.GrailsApplicationAware
-import org.hibernate.StaleObjectStateException;
+import org.hibernate.StaleObjectStateException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -16,9 +17,9 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 
-class DefaultTencentAuthDao implements TencentAuthDao<Object, Object>, InitializingBean,
-ApplicationContextAware, GrailsApplicationAware {
-	private static def log = Logger.getLogger(this)
+class DefaultTencentAuthDao implements TencentAuthDao<Object, Object>, InitializingBean, ApplicationContextAware, GrailsApplicationAware {
+
+	private static Logger log = LoggerFactory.getLogger(this)
 
 	GrailsApplication grailsApplication
 	ApplicationContext applicationContext
@@ -33,7 +34,7 @@ ApplicationContextAware, GrailsApplicationAware {
 	List<String> defaultRoleNames = ['ROLE_USER', 'ROLE_TENCENT']
 
 	def tencentAuthService
-	DomainsRelation domainsRelation = null
+	DomainsRelation domainsRelation
 
 	private Class<?> TencentUserDomainClazz
 	private Class<?> AppUserDomainClazz
@@ -43,7 +44,7 @@ ApplicationContextAware, GrailsApplicationAware {
 			return tencentAuthService.getTencentUser(user)
 		}
 		if (domainsRelation == DomainsRelation.JoinedUser) {
-			def loaded = null
+			def loaded
 			TencentUserDomainClazz.withTransaction { status ->
 				user = TencentUserDomainClazz.findWhere((appUserConnectionPropertyName): user)
 			}
@@ -68,7 +69,7 @@ ApplicationContextAware, GrailsApplicationAware {
 			return tencentUser
 		}
 		if (domainsRelation == DomainsRelation.JoinedUser) {
-			Object result = null
+			Object result
 			TencentUserDomainClazz.withTransaction { status ->
 				tencentUser.merge()
 				result = tencentUser.getAt(appUserConnectionPropertyName)
@@ -83,7 +84,7 @@ ApplicationContextAware, GrailsApplicationAware {
 		if (tencentAuthService && tencentAuthService.respondsTo('findUser', String.class)) {
 			return tencentAuthService.findUser(uid)
 		}
-		def user = null
+		def user
 		TencentUserDomainClazz.withTransaction { status ->
 			user = TencentUserDomainClazz.findWhere(uid: uid)
 			if (user
@@ -205,9 +206,8 @@ ApplicationContextAware, GrailsApplicationAware {
 		return roles.collect {
 			if (it instanceof String) {
 				return new GrantedAuthorityImpl(it.toString())
-			} else {
-				new GrantedAuthorityImpl(it[conf.authority.nameField])
 			}
+			new GrantedAuthorityImpl(it[conf.authority.nameField])
 		}
 	}
 
